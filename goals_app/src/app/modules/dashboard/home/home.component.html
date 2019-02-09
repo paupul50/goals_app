@@ -1,7 +1,18 @@
 <ActionBar class="action-bar">
-    <Label class="action-bar-title" text="home3"></Label>
+    <Label class="action-bar-title" text="Home"></Label>
 </ActionBar>
 
 <GridLayout class="page">
-    <!-- Add your page content here -->
+    <!-- temp -->
+    <StackLayout class="m-15" sdkExampleTitle sdkToggleNavButton>
+        <Button class="btn btn-primary btn-active" id="button" text="paimti duomenis" (tap)="onTap()"></Button>
+        <ListView [items]="tempData" class="list-group">
+            <ng-template let-country="item">
+                <StackLayout orientation="horizontal" class="list-group-item">
+                    <Label [text]="country"></Label>
+                </StackLayout>
+            </ng-template>
+        </ListView>
+    </StackLayout>
+
 </GridLayout>
