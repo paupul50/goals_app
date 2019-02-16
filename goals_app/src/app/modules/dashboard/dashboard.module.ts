@@ -1,13 +1,13 @@
 import { NgModule, NO_ERRORS_SCHEMA } from "@angular/core";
 import { NativeScriptCommonModule } from "nativescript-angular/common";
 
-import { HomeRoutingModule } from "./dashboard-routing.module";
-import { HomeComponent } from "./home/home.component";
+import { DashboardRoutingModule } from "./dashboard-routing.module";
+import { HomeComponent } from "./components/home/home.component";
 
 @NgModule({
     imports: [
         NativeScriptCommonModule,
-        HomeRoutingModule
+        DashboardRoutingModule
     ],
     declarations: [
         HomeComponent
