@@ -1,1 +1,9 @@
-<Label text="Connect to bluetooth"></Label>
+<Button class="btn btn-primary btn-active" id="button" text="Bluetooth" (tap)="onBluetoothButtonTap()"></Button>
+<ActivityIndicator [busy]="isLoading"></ActivityIndicator>
+<ListView [items]="peripherals" class="list-group">
+    <ng-template let-peripheral="item">
+        <StackLayout orientation="horizontal" class="list-group-item">
+            <Button class="btn btn-primary btn-active" id="button" [text]="peripheral.name" (tap)="onPeripheralTap(peripheral)" ></Button>
+        </StackLayout>
+    </ng-template>
+</ListView>

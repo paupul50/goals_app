@@ -1,8 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 
-// import * as Bluetooth from 'nativescript-bluetooth';
-
 @Component({
     selector: "Home",
     moduleId: module.id,
