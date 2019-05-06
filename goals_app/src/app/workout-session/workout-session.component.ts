@@ -20,130 +20,81 @@ export class WorkoutSessionComponent implements OnInit, OnChanges, OnDestroy {
     @Input() workoutId: string;
     locationString: string;
     tempIndex = 0;
-    marker = new Marker();
-    markerRemoved = true;
 
     constructor(public workoutCreateService: WorkoutCreateService,
         private _workoutService: WorkoutService) {
 
     }
-    map: MapView;
 
     imitateLocation(event: any) {
-        if (this.workoutCreateService.isWorkoutSession && this.workoutCreateService.currentSessionPoint > 0) {
-            this.workoutCreateService.changeUserLocation(event.coords);
+        if (this.workoutCreateService.isSessionStarted && this.workoutCreateService.currentSessionPoint > 0) {
+            if (!this.workoutCreateService.userLocation) {
+                this.workoutCreateService.userLocation = new Marker();
+                this.workoutCreateService.changeUserLocation(event.position);
+                this.workoutCreateService.map.addMarker(this.workoutCreateService.userLocation);
+            } else {
+                this.workoutCreateService.changeUserLocation(event.position);
+            }
+        }
+
+    }
+
+    // workout loading
+    ngOnChanges(changes: SimpleChanges) {
+        const workoutId: SimpleChange = changes.workoutId;
+        if (workoutId.currentValue != null) {
+            this._workoutService.getUserWorkout(this.workoutId).subscribe((workout: any) => {
+                if (!this.workoutCreateService.isSessionStarted) {
+                    this.workoutCreateService.clearRoutePoints();
+                    this.workoutCreateService.map.clear();
+                }
+                this.initializeWorkoutValues(workout);
+            });
         }
     }
 
-    ngOnChanges(changes: SimpleChanges) {
-        const workoutId: SimpleChange = changes.workoutId;
-        // console.log('prev value: ', workoutId.previousValue);
-        // console.log('got name: ', workoutId.currentValue);
-        if (workoutId.currentValue != null) {
-            // getCurrentLocation({
-            //     timeout: 1000
-            //  })
-            //     .then(location => {
-            //         console.log("Location received: " + location);
-            //         this.workoutCreateService.userLocation = {
-            //             lat: location.latitude,
-            //             lng: location.longitude
-            //         }
-            //     }).catch(error => {
-            //         console.log("Location error received: " + error);
-            //         alert("Location error received: " + error);
-            //     });
+    private initializeWorkoutValues(workout: any) {
+        this.workoutCreateService.workoutId = this.workoutId;
+        let pl = new Polyline();
+        workout.workoutWithRoutePoints.forEach(route => {
+            let rp = new Circle();
+            rp.clickable = route.clickable;
+            rp.center = Position.positionFromLatLng(route.lat, route.lng);
+            pl.addPoint(rp.center);
+            rp.radius = route.radius;
+            rp.zIndex = route.index;
+            this.workoutCreateService.routePoints.push(rp);
+            this.workoutCreateService.map.addCircle(this.workoutCreateService.routePoints[this.workoutCreateService.routePoints.length - 1]);
 
-            this._workoutService.getUserWorkout(this.workoutId).subscribe((workout: any) => {
-                this.workoutCreateService.clearRoutePoints();
-                this.map.clear();
-                this.markerRemoved = true;
-                // console.log('workout', workout);
-                // this.isWorkoutLoaded = true;
-                this.workoutCreateService.routePoints = workout.workoutWithRoutePoints;
-                this.workoutCreateService.isWorkoutSession = true;
-                this.workoutCreateService.workoutId = this.workoutId;
-                let pl = new Polyline();
-                this.workoutCreateService.routePoints.forEach(route => {
-                    let rp = new Circle();
-
-
-
-                    // lat: this.centerCoordinates.lat,
-                    // lng: this.centerCoordinates.lng,
-                    // radius: 50,
-                    // fillColour: 'blue',
-                    // circleDraggable: true,
-                    // editable: true,
-                    // index: this.routePoints.length + 1
-                    rp.clickable = route.clickable;
-                    rp.center = Position.positionFromLatLng(route.lat, route.lng);
-                    pl.addPoint(rp.center);
-                    rp.radius = route.radius;
-                    // let color = new Color(route.fillColour)
-                    // console.log('colour:', route.fillColour)
-                    // console.log('color:', color)
-                    // rp.fillColor = color;
-                    rp.zIndex = route.index;
-                    this.map.addCircle(rp);
-                });
-                this.map.addPolyline(pl);
-                // console.log('sessionPoint', this.workoutCreateService.currentSessionPoint);
-                if (this.workoutCreateService.currentSessionPoint > 1) {
-                    this.workoutCreateService.isSessionStarted = true;
-                    this.workoutCreateService.loadWorkoutProgress();
-                }
-            });
-
+        });
+        this.workoutCreateService.polyline = pl;
+        this.workoutCreateService.map.addPolyline(this.workoutCreateService.polyline);
+        if (this.workoutCreateService.currentSessionPoint > 1) {
+            this.workoutCreateService.isSessionStarted = true;
+            this.workoutCreateService.loadWorkoutProgress();
         }
     }
     //Map events
     onMapReady = (event) => {
-        this.map = event.object;
+        this.workoutCreateService.map = event.object;
     };
 
     onTap() {
         console.log(this.workoutId);
-        this.getPosition();
-
-        // isEnabled().then(function (isLocationEnabled) {
-        //     let message = "Location services are not available";
-        //     if (isLocationEnabled) {
-        //         message = "Location services are available";
-        //     }
-        //     alert(message);
-        // }, function (e) {
-        //     console.log("Location error received: " + (e.message || e));
-        // });
+        // this.getPosition();
     }
 
-    getPosition() {
-        getCurrentLocation({
-            timeout: 1000
-        })
-            .then(location => {
-                this.locationString = "Location received: " + location.latitude + ' ' + location.longitude + ': ' + this.tempIndex++;
-                this.workoutCreateService.userLocation = {
-                    lat: location.latitude,
-                    lng: location.longitude
-                }
-                if (this.markerRemoved) {
-                    console.log(this.marker);
-                    this.marker = new Marker();
-                    this.marker.position = Position.positionFromLatLng(location.latitude, location.longitude);
-                    this.map.addMarker(this.marker);
-                    this.markerRemoved = false;
-                } else {
-                    this.marker.position = Position.positionFromLatLng(location.latitude, location.longitude);
-                }
-
-
-
-            }).catch(error => {
-                this.locationString = "Location error received: " + error;
-                alert("Location error received: " + error);
-            });
+    startWorkout() {
+        this.workoutCreateService.startWorkoutSession();
     }
+
+    endWorkoutSession() {
+        if (this.workoutCreateService.isSessionStarted) {
+            this.workoutCreateService.currentSessionPoint = -1;
+            this.workoutCreateService.updateWorkoutSession();
+        }
+    }
+
     ngOnInit() {
         if (androidApp) {
             androidApp.on(AndroidApplication.activityResumedEvent, this.onAndroidActivityResume, this);
@@ -157,8 +108,8 @@ export class WorkoutSessionComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     private onAndroidActivityResume(args) {
-        if (this.map && this.map.nativeView && this.map._context === args.activity) {
-            this.map.nativeView.onResume();
+        if (this.workoutCreateService.map && this.workoutCreateService.map.nativeView && this.workoutCreateService.map._context === args.activity) {
+            this.workoutCreateService.map.nativeView.onResume();
         }
     }
 

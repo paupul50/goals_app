@@ -1,26 +1,30 @@
-<!-- <ng-template *ngIf="isWorkoutsLoaded"> -->
-<Label [text]='"Mano treniruotės"'></Label>
-<ng-container *ngIf="workouts">
-    <ListView [items]="workouts" (itemTap)="onItemTap($event)" height="500">
-        <ng-template let-item="item" let-i="index" let-odd="odd" let-even="even">
-            <StackLayout [class.odd]="odd" [class.even]="even">
-                <Label [text]='""'></Label>
-                <Label [text]='item.name'></Label>
-                <Label [text]='""'></Label>
-            </StackLayout>
-        </ng-template>
-    </ListView>
+<ng-container *ngIf="workoutCreateService.isSessionStarted">
+    <Label [text]='"Jog matytumėte treniruotes, turite užbaigti sesiją."'></Label>
 </ng-container>
+<ng-container *ngIf="!workoutCreateService.isSessionStarted">
+    <Label [text]='"Mano treniruotės"'></Label>
+    <ng-container *ngIf="workouts">
+        <ListView [items]="workouts" (itemTap)="onItemTap($event)" height="500">
+            <ng-template let-item="item" let-i="index" let-odd="odd" let-even="even">
+                <StackLayout [class.odd]="odd" [class.even]="even">
+                    <Label [text]='""'></Label>
+                    <Label [text]='item.name'></Label>
+                    <Label [text]='""'></Label>
+                </StackLayout>
+            </ng-template>
+        </ListView>
+    </ng-container>
 
-<ng-container *ngIf="groupWorkouts">
-    <Label [text]='"Grupės treniruotės"'></Label>
-    <ListView [items]="groupWorkouts" (itemTap)="onItemTap($event)" height="500">
-        <ng-template let-item="item" let-i="index" let-odd="odd" let-even="even">
-            <StackLayout [class.odd]="odd" [class.even]="even">
-                <Label [text]='""'></Label>
-                <Label [text]='item.name'></Label>
-                <Label [text]='""'></Label>
-            </StackLayout>
-        </ng-template>
-    </ListView>
+    <ng-container *ngIf="groupWorkouts">
+        <Label [text]='"Grupės treniruotės"'></Label>
+        <ListView [items]="groupWorkouts" (itemTap)="onItemTap($event)" height="500">
+            <ng-template let-item="item" let-i="index" let-odd="odd" let-even="even">
+                <StackLayout [class.odd]="odd" [class.even]="even">
+                    <Label [text]='""'></Label>
+                    <Label [text]='item.name'></Label>
+                    <Label [text]='""'></Label>
+                </StackLayout>
+            </ng-template>
+        </ListView>
+    </ng-container>
 </ng-container>

@@ -17,7 +17,7 @@ export class WorkoutListComponent implements OnInit {
     isGroupWorkoutsLoaded = false;
     isWorkoutsLoaded = false;
     constructor(
-        private _workoutCreateService: WorkoutCreateService,
+        public workoutCreateService: WorkoutCreateService,
         private _workoutService: WorkoutService,
         private _workoutSessionService: WorkoutSessionService,
         private _router: Router,
@@ -37,13 +37,15 @@ export class WorkoutListComponent implements OnInit {
         });
         this._workoutSessionService.GetCurrentWorkoutSession().subscribe((result: any) => {
             if (result == null) { // if no active workout session
-                this._workoutCreateService.isCheckedIfLastWorkoutIsDone = true;
+                this.workoutCreateService.isCheckedIfLastWorkoutIsDone = true;
             } else { // if workout session is active
-                this._workoutCreateService.isCheckedIfLastWorkoutIsDone = true;
-                this._workoutCreateService.isWorkoutSession = true;
-                this._workoutCreateService.currentSessionPoint = result.progressIndex;
-                this._workoutCreateService.startCheckingCurrentCoords();
+                this.workoutCreateService.isCheckedIfLastWorkoutIsDone = true;
+                this.workoutCreateService.isSessionStarted = true;
+                this.workoutCreateService.currentSessionPoint = result.progressIndex;
+                this.workoutCreateService.startCheckingCurrentCoords();
                 //   this._router.navigate(['/session', result.workoutId]);
+                console.log('workout', result);
+                this._tabChangeService.setNewTabValue({tabNumber: 1, id: result.workoutId});
                 console.log('sesija jau yra!!!!!');
             }
         });

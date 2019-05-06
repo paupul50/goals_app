@@ -1,7 +1,14 @@
-<ng-container *ngIf="workoutId">
-    <Button text='{{workoutId}}' class="btn btn-primary" (onTap)="onTap()"></Button>
-    <label text='{{locationString}}'></label>
+<ng-container *ngIf="workoutId && !workoutCreateService.isSessionStarted">
+    <Button text='Pradėti treniruotę' class="btn btn-primary" (onTap)="startWorkout()"></Button>
+</ng-container>
+<ng-container *ngIf="!workoutId">
+    <label [text]="'Pasirinkite treniruotę.'"></label>
+</ng-container>
+<ng-container *ngIf="workoutId && workoutCreateService.isSessionStarted">
+    <Button text='Baigti treniruotę' class="btn btn-primary" (onTap)="endWorkoutSession()"></Button>
+    <label text='{{workoutCreateService.locationString}}'></label>
+    <label text='{{workoutCreateService.lastGeoTime}}'></label>
 </ng-container>
 <GridLayout>
-    <MapView (mapReady)="onMapReady($event)" [latitude]="54.904053" [longitude]="23.949231" [zoom]="16"> </MapView>
+    <MapView (mapReady)="onMapReady($event)" (coordinateTapped)="imitateLocation($event)" [latitude]="54.904053" [longitude]="23.949231" [zoom]="16"> </MapView>
 </GridLayout>

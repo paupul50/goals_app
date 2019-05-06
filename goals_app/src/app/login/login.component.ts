@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UserService } from '../services/user/user.service';
 import { Router } from '@angular/router';
 import { enableLocationRequest } from 'nativescript-geolocation';
+import { Page } from 'tns-core-modules/ui/page/page';
 
 @Component({
     selector: 'ns-login',
@@ -11,12 +12,14 @@ import { enableLocationRequest } from 'nativescript-geolocation';
     moduleId: module.id,
 })
 export class LoginComponent implements OnInit {
+    form: FormGroup;
+    constructor(private fb: FormBuilder, private userService: UserService, private _router: Router, private _page: Page) {
+        this.addControls();
+    }
+
     ngOnInit(): void {
         enableLocationRequest(true);
-    }
-    form: FormGroup;
-    constructor(private fb: FormBuilder, private userService: UserService, private _router: Router) {
-        this.addControls();
+        this._page.actionBarHidden = true;
     }
 
     addControls() {
