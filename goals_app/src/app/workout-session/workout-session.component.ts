@@ -1,10 +1,11 @@
-import { Component, OnInit, Input, ElementRef, ViewChild, OnChanges, SimpleChanges, SimpleChange } from '@angular/core';
+import { Component, OnInit, Input, ElementRef, ViewChild, OnChanges, SimpleChanges, SimpleChange, OnDestroy } from '@angular/core';
 
 import { WorkoutCreateService } from '../services/workout/workout-create/workout-create.service';
 import { WorkoutService } from '../services/workout/workout/workout.service';
 import { MapView, Marker, Position, Circle, Polyline } from 'nativescript-google-maps-sdk';
 import { enableLocationRequest, isEnabled, getCurrentLocation } from "nativescript-geolocation";
-
+import { on as applicationOn, launchEvent, suspendEvent, resumeEvent, exitEvent, lowMemoryEvent, uncaughtErrorEvent, ApplicationEventData } from "tns-core-modules/application";
+import { android as androidApp, AndroidApplication } from "tns-core-modules/application";
 import { registerElement } from "nativescript-angular/element-registry";
 import { Color } from 'tns-core-modules/color/color';
 registerElement("MapView", () => require("nativescript-google-maps-sdk").MapView);
@@ -14,12 +15,13 @@ registerElement("MapView", () => require("nativescript-google-maps-sdk").MapView
     styleUrls: ['./workout-session.component.css'],
     moduleId: module.id,
 })
-export class WorkoutSessionComponent implements OnInit, OnChanges {
+export class WorkoutSessionComponent implements OnInit, OnChanges, OnDestroy {
     @ViewChild("MapView") mapView: ElementRef;
     @Input() workoutId: string;
     locationString: string;
     tempIndex = 0;
     marker = new Marker();
+    markerRemoved = true;
 
     constructor(public workoutCreateService: WorkoutCreateService,
         private _workoutService: WorkoutService) {
@@ -51,12 +53,11 @@ export class WorkoutSessionComponent implements OnInit, OnChanges {
             //         console.log("Location error received: " + error);
             //         alert("Location error received: " + error);
             //     });
-            this.workoutCreateService.clearRoutePoints();
-            this.map.clear();
-            this.marker.position = Position.positionFromLatLng(54.904053, 23.949231);
-            this.marker.zIndex = 100;
-            this.map.addMarker(this.marker);
+
             this._workoutService.getUserWorkout(this.workoutId).subscribe((workout: any) => {
+                this.workoutCreateService.clearRoutePoints();
+                this.map.clear();
+                this.markerRemoved = true;
                 // console.log('workout', workout);
                 // this.isWorkoutLoaded = true;
                 this.workoutCreateService.routePoints = workout.workoutWithRoutePoints;
@@ -79,10 +80,10 @@ export class WorkoutSessionComponent implements OnInit, OnChanges {
                     rp.center = Position.positionFromLatLng(route.lat, route.lng);
                     pl.addPoint(rp.center);
                     rp.radius = route.radius;
-                    let color = new Color(route.fillColour)
-                    console.log('colour:', route.fillColour)
-                    console.log('color:', color)
-                    rp.fillColor = color;
+                    // let color = new Color(route.fillColour)
+                    // console.log('colour:', route.fillColour)
+                    // console.log('color:', color)
+                    // rp.fillColor = color;
                     rp.zIndex = route.index;
                     this.map.addCircle(rp);
                 });
@@ -104,7 +105,6 @@ export class WorkoutSessionComponent implements OnInit, OnChanges {
     onTap() {
         console.log(this.workoutId);
         this.getPosition();
-        this.mapView.nativeElement
 
         // isEnabled().then(function (isLocationEnabled) {
         //     let message = "Location services are not available";
@@ -127,14 +127,39 @@ export class WorkoutSessionComponent implements OnInit, OnChanges {
                     lat: location.latitude,
                     lng: location.longitude
                 }
-                this.marker.position = Position.positionFromLatLng(location.latitude, location.longitude);
+                if (this.markerRemoved) {
+                    console.log(this.marker);
+                    this.marker = new Marker();
+                    this.marker.position = Position.positionFromLatLng(location.latitude, location.longitude);
+                    this.map.addMarker(this.marker);
+                    this.markerRemoved = false;
+                } else {
+                    this.marker.position = Position.positionFromLatLng(location.latitude, location.longitude);
+                }
+
+
+
             }).catch(error => {
                 this.locationString = "Location error received: " + error;
                 alert("Location error received: " + error);
             });
     }
     ngOnInit() {
-        console.log('init')
+        if (androidApp) {
+            androidApp.on(AndroidApplication.activityResumedEvent, this.onAndroidActivityResume, this);
+        }
+    }
+
+    ngOnDestroy() {
+        if (androidApp) {
+            androidApp.off(AndroidApplication.activityResumedEvent, this.onAndroidActivityResume, this);
+        }
+    }
+
+    private onAndroidActivityResume(args) {
+        if (this.map && this.map.nativeView && this.map._context === args.activity) {
+            this.map.nativeView.onResume();
+        }
     }
 
 }

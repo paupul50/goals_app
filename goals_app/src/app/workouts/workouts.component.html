@@ -1,8 +1,7 @@
-<TabView [(ngModel)]="tabIndex" androidTabsPosition="bottom" id="tabViewContainer" (selectedIndexChanged)="tabIndexChanged($event)">
+<TabView [(ngModel)]="tabIndex" androidOffscreenTabLimit="4" androidTabsPosition="bottom" id="tabViewContainer" (selectedIndexChanged)="tabIndexChanged($event)">
+
     <StackLayout *tabItem="{title: 'Treniruotės'}">
-        <StackLayout>
-            <ns-workout-list></ns-workout-list>
-        </StackLayout>
+        <ns-workout-list></ns-workout-list>
     </StackLayout>
     <StackLayout *tabItem="{title: 'Sesija'}" isEnabled="false">
         <ns-workout-session [workoutId]="workoutId"></ns-workout-session>
