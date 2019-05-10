@@ -6,7 +6,7 @@ import { UserService } from '../../user/user.service';
 @Injectable({
   providedIn: 'root'
 })
-export class WorkoutSessionService {
+export class WorkoutSessionHttpService {
 
   constructor(private _http: HttpClient, private _userService: UserService) { }
 

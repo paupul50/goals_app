@@ -1,5 +1,4 @@
-import { ActivatedRoute, Params } from '@angular/router';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
 import { UserService } from '../services/user/user.service';
 import { Router } from '@angular/router';
 import { TabChangeService } from '../services/tab-change/tab-change.service';
@@ -10,23 +9,18 @@ import { TabChangeService } from '../services/tab-change/tab-change.service';
     styleUrls: ['./workouts.component.css'],
     moduleId: module.id,
 })
-export class WorkoutsComponent implements OnInit {
+export class WorkoutsComponent {
     tabIndex = 0;
     workoutId = null;
+
     constructor(private userService: UserService, private _router: Router, private tabChangeService: TabChangeService) {
-        // this._activatedRoute.params.subscribe((params: Params) => {
-        //     // this.id = params['id'];
-        //     console.log('route', params);
-        //   });
         this.tabChangeService.getTabChangeObservable().subscribe((tab:any)=>{
             this.tabIndex = tab.tabNumber;
             this.workoutId = tab.id;
         })
     }
 
-    ngOnInit() {
-    }
-
+    // tab navigation
     tabIndexChanged(event: any) {
         switch (event.newIndex) {
             case 0:

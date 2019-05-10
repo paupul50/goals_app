@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { WorkoutCreateService } from '../services/workout/workout-create/workout-create.service';
-import { WorkoutService } from '../services/workout/workout/workout.service';
-import { WorkoutSessionService } from '../services/workout/workout-session/workout-session.service';
+import { Component } from '@angular/core';
+import { WorkoutService } from '../services/workout/workout-create/workout.service';
+import { WorkoutHttpService } from '../services/workout/workout/workout-http.service';
+import { WorkoutSessionHttpService } from '../services/workout/workout-session/workout-session-http.service';
 import { TabChangeService } from '../services/tab-change/tab-change.service';
+import { SnackbarService } from '../services/message-snackbar/snackbar.service';
 
 @Component({
     selector: 'ns-workout-list',
@@ -11,54 +11,42 @@ import { TabChangeService } from '../services/tab-change/tab-change.service';
     styleUrls: ['./workout-list.component.css'],
     moduleId: module.id,
 })
-export class WorkoutListComponent implements OnInit {
+export class WorkoutListComponent {
     workouts: any[];
     groupWorkouts: any[];
     isGroupWorkoutsLoaded = false;
     isWorkoutsLoaded = false;
+
     constructor(
-        public workoutCreateService: WorkoutCreateService,
-        private _workoutService: WorkoutService,
-        private _workoutSessionService: WorkoutSessionService,
-        private _router: Router,
-        private _tabChangeService: TabChangeService) {
-        // load user workouts
-        this._workoutService.getUserWorkouts().subscribe((workouts: any[]) => {
+        public workoutService: WorkoutService,
+        private _workoutHttpService: WorkoutHttpService,
+        private _workoutSessionHttpService: WorkoutSessionHttpService,
+        private _tabChangeService: TabChangeService,
+        private _snackbarService: SnackbarService) {
+        this._workoutHttpService.getUserWorkouts().subscribe((workouts: any[]) => {
             this.workouts = workouts;
-            // console.log('workouts', this.workouts);
             this.isWorkoutsLoaded = true;
         });
-        // load group workouts
-        this._workoutService.getGroupWorkouts().subscribe((workouts: any[]) => {
+        this._workoutHttpService.getGroupWorkouts().subscribe((workouts: any[]) => {
             this.groupWorkouts = workouts;
-            // console.log('group workouts', this.groupWorkouts);
-
             this.isGroupWorkoutsLoaded = true;
         });
-        this._workoutSessionService.GetCurrentWorkoutSession().subscribe((result: any) => {
+        this._workoutSessionHttpService.GetCurrentWorkoutSession().subscribe((result: any) => {
             if (result == null) { // if no active workout session
-                this.workoutCreateService.isCheckedIfLastWorkoutIsDone = true;
+                this.workoutService.isCheckedIfLastWorkoutIsDone = true;
             } else { // if workout session is active
-                this.workoutCreateService.isCheckedIfLastWorkoutIsDone = true;
-                this.workoutCreateService.isSessionStarted = true;
-                this.workoutCreateService.currentSessionPoint = result.progressIndex;
-                this.workoutCreateService.startCheckingCurrentCoords();
-                //   this._router.navigate(['/session', result.workoutId]);
-                console.log('workout', result);
+                this.workoutService.isCheckedIfLastWorkoutIsDone = true;
+                this.workoutService.isSessionStarted = true;
+                this.workoutService.currentSessionPoint = result.progressIndex;
+                this.workoutService.startCheckingCurrentCoords();
                 this._tabChangeService.setNewTabValue({tabNumber: 1, id: result.workoutId});
-                console.log('sesija jau yra!!!!!');
+                this._snackbarService.openSnackBar('sesija pradėta');
             }
         });
-        // check if are any workouts are in progress GetCurrentWorkoutSession
     }
 
     onItemTap(event: any) {
         this._tabChangeService.setNewTabValue({tabNumber: 1, id: this.workouts[event.index].id});
-
-    }
-
-    ngOnInit(): void {
-        // console.log('init');
     }
 
 }

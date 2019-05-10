@@ -1,7 +1,7 @@
-import { SnackbarService } from './../../message-snackbar/snackbar.service';
+import { SnackbarService } from '../../message-snackbar/snackbar.service';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { WorkoutSessionService } from '../workout-session/workout-session.service';
+import { WorkoutSessionHttpService } from '../workout-session/workout-session-http.service';
 import { Polyline, Circle, Marker, Position, MapView } from 'nativescript-google-maps-sdk';
 import { Color } from 'tns-core-modules/color/color';
 import { getCurrentLocation } from 'nativescript-geolocation';
@@ -10,7 +10,7 @@ import { TabChangeService } from '../../tab-change/tab-change.service';
 @Injectable({
     providedIn: 'root'
 })
-export class WorkoutCreateService { // susikeist pavadinimais su workoutservice
+export class WorkoutService {
     isSessionStarted = false;
     currentSessionPoint = 0;
     locationString = '';
@@ -36,7 +36,7 @@ export class WorkoutCreateService { // susikeist pavadinimais su workoutservice
     infoWindow: any;
     constructor(
         private _tabChangeService: TabChangeService,
-        private _workoutSessionService: WorkoutSessionService,
+        private _workoutSessionHttpService: WorkoutSessionHttpService,
         private _snackbarService: SnackbarService) { }
 
 
@@ -75,7 +75,7 @@ export class WorkoutCreateService { // susikeist pavadinimais su workoutservice
 
     // to update workout progress
     updateWorkoutSession(routePoint: any = {}) {
-        this._workoutSessionService.updateWorkoutSession(this.currentSessionPoint, routePoint.id, this.workoutId).subscribe((result: any) => {
+        this._workoutSessionHttpService.updateWorkoutSession(this.currentSessionPoint, routePoint.id, this.workoutId).subscribe((result: any) => {
             if (result.status === 0 || result.status === 2) {
                 this.destroyInterval();
                 this.clearRoutePoints();
@@ -96,7 +96,7 @@ export class WorkoutCreateService { // susikeist pavadinimais su workoutservice
     startWorkoutSession() {
         this.startCheckingCurrentCoords();
         // siust request ir sukurimo metu sukurt workout
-        this._workoutSessionService.createWorkoutSession(this.workoutId).subscribe((result: any) => {
+        this._workoutSessionHttpService.createWorkoutSession(this.workoutId).subscribe((result: any) => {
             this.currentSessionPoint = 1;
             this.isSessionStarted = true;
             console.log('create session', result);

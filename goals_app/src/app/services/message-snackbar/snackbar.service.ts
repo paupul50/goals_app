@@ -4,14 +4,10 @@ import { SnackBar } from "nativescript-snackbar";
   providedIn: 'root'
 })
 export class SnackbarService {
-//   private duration = 2000;
 
   constructor() { }
 
   openSnackBar(message: string) {
     (new SnackBar()).simple(message)
-    // this.snackBar.open(message, null, {
-    //   duration: this.duration,
-    // });
   }
 }

@@ -1,7 +1,7 @@
-<ng-container *ngIf="workoutCreateService.isSessionStarted">
+<ng-container *ngIf="workoutService.isSessionStarted">
     <Label [text]='"Jog matytumėte treniruotes, turite užbaigti sesiją."'></Label>
 </ng-container>
-<ng-container *ngIf="!workoutCreateService.isSessionStarted">
+<ng-container *ngIf="!workoutService.isSessionStarted">
     <Label [text]='"Mano treniruotės"'></Label>
     <ng-container *ngIf="workouts">
         <ListView [items]="workouts" (itemTap)="onItemTap($event)" height="500">
