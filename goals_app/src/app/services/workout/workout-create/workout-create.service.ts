@@ -1,3 +1,4 @@
+import { SnackbarService } from './../../message-snackbar/snackbar.service';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { WorkoutSessionService } from '../workout-session/workout-session.service';
@@ -35,7 +36,8 @@ export class WorkoutCreateService { // susikeist pavadinimais su workoutservice
     infoWindow: any;
     constructor(
         private _tabChangeService: TabChangeService,
-        private _workoutSessionService: WorkoutSessionService) { }
+        private _workoutSessionService: WorkoutSessionService,
+        private _snackbarService: SnackbarService) { }
 
 
     // make circles green when loaded
@@ -64,6 +66,7 @@ export class WorkoutCreateService { // susikeist pavadinimais su workoutservice
             if (this.arePointsNear(this.userLocation, routePoint, routePoint.radius / 1000) && this.currentSessionPoint === routePoint.zIndex) {
                 console.log('new point reached!');
                 // siust requesta su tasko id
+                console.log(routePoint);
                 this.updateWorkoutSession(routePoint);
             }
         });
@@ -71,8 +74,8 @@ export class WorkoutCreateService { // susikeist pavadinimais su workoutservice
     }
 
     // to update workout progress
-    updateWorkoutSession(routePoint: any = null) {
-        this._workoutSessionService.updateWorkoutSession(this.currentSessionPoint, this.workoutId).subscribe((result: any) => {
+    updateWorkoutSession(routePoint: any = {}) {
+        this._workoutSessionService.updateWorkoutSession(this.currentSessionPoint, routePoint.id, this.workoutId).subscribe((result: any) => {
             if (result.status === 0 || result.status === 2) {
                 this.destroyInterval();
                 this.clearRoutePoints();
@@ -80,11 +83,11 @@ export class WorkoutCreateService { // susikeist pavadinimais su workoutservice
                 this.isSessionStarted = false;
                 // this._router.navigate(['workout']);
                 this._tabChangeService.setNewTabValue({tabNumber: 0, id: null});
-                console.log('sesija pabaigta');
+                this._snackbarService.openSnackBar('Treniruotė baigta');
             } else {
                 routePoint.fillColor = new Color('green');
                 this.currentSessionPoint++;
-                console.log('taskas iveiktas');
+                this._snackbarService.openSnackBar('Taškas įveiktas');
             }
         });
     }

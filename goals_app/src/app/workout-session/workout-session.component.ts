@@ -58,6 +58,7 @@ export class WorkoutSessionComponent implements OnInit, OnChanges, OnDestroy {
         let pl = new Polyline();
         workout.workoutWithRoutePoints.forEach(route => {
             let rp = new Circle();
+            rp.id = route.id;
             rp.clickable = route.clickable;
             rp.center = Position.positionFromLatLng(route.lat, route.lng);
             pl.addPoint(rp.center);

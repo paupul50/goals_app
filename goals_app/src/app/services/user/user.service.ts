@@ -25,9 +25,9 @@ export class UserService {
     return this._http.post(this.BACKURL + 'api/users/create', body, { headers: this.getLoginHeader() });
   }
 
-  login(email: string, password: string): Subject<boolean> {
+  login(username: string, password: string): Subject<boolean> {
     const body = JSON.stringify({
-      username: email,
+      username: username,
       password: password
     });
     const result: Subject<boolean> = new Subject<boolean>();

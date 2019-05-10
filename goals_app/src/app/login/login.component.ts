@@ -24,21 +24,17 @@ export class LoginComponent implements OnInit {
 
     addControls() {
         this.form = this.fb.group({
-            'email': ['kazkas@gmail.com', Validators.compose([Validators.required, Validators.email])],
+            'username': ['kazkas', Validators.compose([Validators.required])],
             'password': ['kazkas', Validators.required]
         });
     }
     onSubmit() {
         if (this.form.valid) {
-            if (this.form.value.email === 'test' && this.form.value.password === 'test') {
-                this._router.navigate(['workouts']);
-            } else {
-                this.userService.login(this.form.value.email, this.form.value.password).subscribe((result: any) => {
-                    if (result === true) {
-                        this._router.navigate(['workouts']);
-                    }
-                });
-            }
+            this.userService.login(this.form.value.username, this.form.value.password).subscribe((result: any) => {
+                if (result === true) {
+                    this._router.navigate(['workouts']);
+                }
+            });
         }
     }
 

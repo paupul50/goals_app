@@ -23,11 +23,12 @@ export class WorkoutSessionService {
       { headers: this._userService.getHeaders() });
   }
 
-  updateWorkoutSession(index: any, id): Observable<any> {
+  updateWorkoutSession(index: any, routeId: any, workoutId: any): Observable<any> {
     const body = JSON.stringify({
       WorkoutProgress: index,
+      RoutePointId: routeId
     });
-    return this._http.patch(this._userService.BACKURL + 'api/workoutProgress/' + id, body,
+    return this._http.patch(this._userService.BACKURL + 'api/workoutProgress/' + workoutId, body,
       { headers: this._userService.getHeaders() });
   }
 
