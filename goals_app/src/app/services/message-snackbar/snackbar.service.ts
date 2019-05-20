@@ -7,7 +7,7 @@ export class SnackbarService {
 
   constructor() { }
 
-  openSnackBar(message: string) {
+  openSnackBar(message: string): void {
     (new SnackBar()).simple(message)
   }
 }

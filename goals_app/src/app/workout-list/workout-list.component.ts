@@ -23,14 +23,11 @@ export class WorkoutListComponent {
         private _workoutSessionHttpService: WorkoutSessionHttpService,
         private _tabChangeService: TabChangeService,
         private _snackbarService: SnackbarService) {
-        this._workoutHttpService.getUserWorkouts().subscribe((workouts: any[]) => {
-            this.workouts = workouts;
-            this.isWorkoutsLoaded = true;
-        });
-        this._workoutHttpService.getGroupWorkouts().subscribe((workouts: any[]) => {
-            this.groupWorkouts = workouts;
-            this.isGroupWorkoutsLoaded = true;
-        });
+            this.initializeWorkouts();
+            this.inizializeWorkoutSession();
+    }
+
+    inizializeWorkoutSession(): void {
         this._workoutSessionHttpService.GetCurrentWorkoutSession().subscribe((result: any) => {
             if (result == null) { // if no active workout session
                 this.workoutService.isCheckedIfLastWorkoutIsDone = true;
@@ -39,14 +36,25 @@ export class WorkoutListComponent {
                 this.workoutService.isSessionStarted = true;
                 this.workoutService.currentSessionPoint = result.progressIndex;
                 this.workoutService.startCheckingCurrentCoords();
-                this._tabChangeService.setNewTabValue({tabNumber: 1, id: result.workoutId});
+                this._tabChangeService.setNewTabValue({ tabNumber: 1, id: result.workoutId });
                 this._snackbarService.openSnackBar('sesija pradėta');
             }
         });
     }
 
-    onItemTap(event: any) {
-        this._tabChangeService.setNewTabValue({tabNumber: 1, id: this.workouts[event.index].id});
+    initializeWorkouts(): void {
+        this._workoutHttpService.getUserWorkouts().subscribe((workouts: any[]) => {
+            this.workouts = workouts;
+            this.isWorkoutsLoaded = true;
+        });
+        this._workoutHttpService.getGroupWorkouts().subscribe((workouts: any[]) => {
+            this.groupWorkouts = workouts;
+            this.isGroupWorkoutsLoaded = true;
+        });
+    }
+
+    onItemTap(event: any): void {
+        this._tabChangeService.setNewTabValue({ tabNumber: 1, id: this.workouts[event.index].id });
     }
 
 }

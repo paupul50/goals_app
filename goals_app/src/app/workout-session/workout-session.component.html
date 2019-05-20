@@ -6,7 +6,6 @@
 </ng-container>
 <ng-container *ngIf="workoutId && workoutService.isSessionStarted">
     <Button text='Baigti treniruotę' class="btn btn-primary" (onTap)="endWorkoutSession()"></Button>
-    <label text='{{workoutService.locationString}}'></label>
     <label text='{{workoutService.lastGeoTime}}'></label>
 </ng-container>
 <GridLayout>

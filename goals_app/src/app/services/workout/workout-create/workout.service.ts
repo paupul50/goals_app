@@ -1,6 +1,5 @@
 import { SnackbarService } from '../../message-snackbar/snackbar.service';
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
 import { WorkoutSessionHttpService } from '../workout-session/workout-session-http.service';
 import { Polyline, Circle, Marker, Position, MapView } from 'nativescript-google-maps-sdk';
 import { Color } from 'tns-core-modules/color/color';
@@ -41,7 +40,7 @@ export class WorkoutService {
 
 
     // make circles green when loaded
-    loadWorkoutProgress() {
+    loadWorkoutProgress(): void {
         this.routePoints.forEach(routePoint => {
             if (routePoint.zIndex < this.currentSessionPoint) {
                 routePoint.fillColor = new Color('green');
@@ -50,7 +49,7 @@ export class WorkoutService {
     }
 
     // clear routes when closing workout
-    clearRoutePoints() {
+    clearRoutePoints(): void {
         this.locationCounter = 0;
         this.routePoints = [];
         // this.isSessionStarted = false;
@@ -60,13 +59,11 @@ export class WorkoutService {
     }
 
     // to change currentLocation coordinates and if it's in the circle, change color of it
-    changeUserLocation(location: Position) {
+    changeUserLocation(location: Position): void {
         this.userLocation.position = location;
         this.routePoints.forEach(routePoint => {
             if (this.arePointsNear(this.userLocation, routePoint, routePoint.radius / 1000) && this.currentSessionPoint === routePoint.zIndex) {
-                console.log('new point reached!');
                 // siust requesta su tasko id
-                console.log(routePoint);
                 this.updateWorkoutSession(routePoint);
             }
         });
@@ -74,14 +71,13 @@ export class WorkoutService {
     }
 
     // to update workout progress
-    updateWorkoutSession(routePoint: any = {}) {
+    updateWorkoutSession(routePoint: any = {}): void {
         this._workoutSessionHttpService.updateWorkoutSession(this.currentSessionPoint, routePoint.id, this.workoutId).subscribe((result: any) => {
             if (result.status === 0 || result.status === 2) {
                 this.destroyInterval();
                 this.clearRoutePoints();
                 this.map.clear();
                 this.isSessionStarted = false;
-                // this._router.navigate(['workout']);
                 this._tabChangeService.setNewTabValue({tabNumber: 0, id: null});
                 this._snackbarService.openSnackBar('Treniruotė baigta');
             } else {
@@ -93,7 +89,7 @@ export class WorkoutService {
     }
 
     // to start workout session
-    startWorkoutSession() {
+    startWorkoutSession(): void {
         this.startCheckingCurrentCoords();
         // siust request ir sukurimo metu sukurt workout
         this._workoutSessionHttpService.createWorkoutSession(this.workoutId).subscribe((result: any) => {
@@ -103,7 +99,7 @@ export class WorkoutService {
         });
     }
 
-    startCheckingCurrentCoords() {
+    startCheckingCurrentCoords(): void {
         this.interval = setInterval(() => {
             this.checkGeoLocation();
         }, 3000);
@@ -120,13 +116,13 @@ export class WorkoutService {
                     this.userLocation.position = Position.positionFromLatLng(location.latitude, location.longitude);
                 }
                 this.locationString = "Location received: " + location.latitude + ' ' + location.longitude + ': ' + this.locationCounter++;
-                this.lastGeoTime = ' laikas:' + new Date().toTimeString();
+                this.lastGeoTime = ' Laikas:' + new Date().toTimeString();
             }).catch(error => {
-                alert("Location error received: " + error);
+                alert("Klaida: " + error);
             });
     }
 
-    destroyInterval() {
+    destroyInterval(): void {
         if (this.interval) {
             clearInterval(this.interval);
         }

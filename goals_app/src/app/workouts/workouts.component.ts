@@ -13,7 +13,7 @@ export class WorkoutsComponent {
     tabIndex = 0;
     workoutId = null;
 
-    constructor(private userService: UserService, private _router: Router, private tabChangeService: TabChangeService) {
+    constructor(private userService: UserService, private tabChangeService: TabChangeService) {
         this.tabChangeService.getTabChangeObservable().subscribe((tab:any)=>{
             this.tabIndex = tab.tabNumber;
             this.workoutId = tab.id;
@@ -21,7 +21,7 @@ export class WorkoutsComponent {
     }
 
     // tab navigation
-    tabIndexChanged(event: any) {
+    tabIndexChanged(event: any): void {
         switch (event.newIndex) {
             case 0:
                 break;

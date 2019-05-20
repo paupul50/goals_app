@@ -18,7 +18,6 @@ import { SnackbarService } from '../message-snackbar/snackbar.service';
 export class HttpConfigInterceptor implements HttpInterceptor {
 
   constructor(private _snackboxService: SnackbarService,
-    // private _loadingBarService: LoadingBarService,
     private _userService: UserService) { }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {

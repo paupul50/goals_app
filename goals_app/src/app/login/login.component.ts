@@ -22,13 +22,13 @@ export class LoginComponent implements OnInit {
         this._page.actionBarHidden = true;
     }
 
-    addControls() {
+    addControls(): void {
         this.form = this.fb.group({
             'username': ['kazkas', Validators.compose([Validators.required])],
             'password': ['kazkas', Validators.required]
         });
     }
-    onSubmit() {
+    onSubmit(): void {
         if (this.form.valid) {
             this.userService.login(this.form.value.username, this.form.value.password).subscribe((result: any) => {
                 if (result === true) {

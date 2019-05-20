@@ -25,7 +25,7 @@ export class WorkoutSessionComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     // for presentation - coordinates on touch
-    imitateLocation(event: any) {
+    imitateLocation(event: any): void {
         if (this.workoutService.isSessionStarted && this.workoutService.currentSessionPoint > 0) {
             if (!this.workoutService.userLocation) {
                 this.workoutService.userLocation = new Marker();
@@ -39,7 +39,7 @@ export class WorkoutSessionComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     // workout loading
-    ngOnChanges(changes: SimpleChanges) {
+    ngOnChanges(changes: SimpleChanges): void {
         const workoutId: SimpleChange = changes.workoutId;
         if (workoutId.currentValue != null) {
             this._workoutHttpService.getUserWorkout(this.workoutId).subscribe((workout: any) => {
@@ -52,7 +52,7 @@ export class WorkoutSessionComponent implements OnInit, OnChanges, OnDestroy {
         }
     }
     // workout value mapping
-    private initializeWorkoutValues(workout: any) {
+    private initializeWorkoutValues(workout: any): void {
         this.workoutService.workoutId = this.workoutId;
         let pl = new Polyline();
         workout.workoutWithRoutePoints.forEach(route => {
@@ -80,11 +80,11 @@ export class WorkoutSessionComponent implements OnInit, OnChanges, OnDestroy {
         this.workoutService.map = event.object;
     };
 
-    startWorkout() {
+    startWorkout(): void {
         this.workoutService.startWorkoutSession();
     }
 
-    endWorkoutSession() {
+    endWorkoutSession(): void {
         if (this.workoutService.isSessionStarted) {
             this.workoutService.currentSessionPoint = -1;
             this.workoutService.updateWorkoutSession();
