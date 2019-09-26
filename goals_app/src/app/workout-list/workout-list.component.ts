@@ -12,8 +12,8 @@ import { SnackbarService } from '../services/message-snackbar/snackbar.service';
     moduleId: module.id,
 })
 export class WorkoutListComponent {
-    workouts: any[];
-    groupWorkouts: any[];
+    workouts: any[] = [];
+    groupWorkouts: any[] = [];
     isGroupWorkoutsLoaded = false;
     isWorkoutsLoaded = false;
 
@@ -48,13 +48,18 @@ export class WorkoutListComponent {
             this.isWorkoutsLoaded = true;
         });
         this._workoutHttpService.getGroupWorkouts().subscribe((workouts: any[]) => {
+            console.log(workouts);
             this.groupWorkouts = workouts;
             this.isGroupWorkoutsLoaded = true;
         });
     }
 
-    onItemTap(event: any): void {
-        this._tabChangeService.setNewTabValue({ tabNumber: 1, id: this.workouts[event.index].id });
+    onItemTap(event: any, isGroup: boolean): void {
+        if(isGroup) {
+            this._tabChangeService.setNewTabValue({ tabNumber: 1, id: this.groupWorkouts[event.index].id });
+        }else {
+            this._tabChangeService.setNewTabValue({ tabNumber: 1, id: this.workouts[event.index].id });
+        }
     }
 
 }

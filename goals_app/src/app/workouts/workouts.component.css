@@ -1,1 +1,7 @@
 /* Add mobile styles for the component here.  */
+
+.action-bar {
+    background-color: #343a40;
+    color: white;
+    text-align: center;
+}

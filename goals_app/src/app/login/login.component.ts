@@ -24,7 +24,7 @@ export class LoginComponent implements OnInit {
 
     addControls(): void {
         this.form = this.fb.group({
-            'username': ['kazkas', Validators.compose([Validators.required])],
+            'username': ['', Validators.compose([Validators.required])],
             'password': ['kazkas', Validators.required]
         });
     }

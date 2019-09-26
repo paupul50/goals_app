@@ -55,7 +55,13 @@ export class WorkoutSessionComponent implements OnInit, OnChanges, OnDestroy {
     private initializeWorkoutValues(workout: any): void {
         this.workoutService.workoutId = this.workoutId;
         let pl = new Polyline();
+        let mapCentered = false;
         workout.workoutWithRoutePoints.forEach(route => {
+            if(!mapCentered) {
+                mapCentered = true;
+                this.workoutService.map.latitude = route.lat;
+                this.workoutService.map.longitude = route.lng;
+            }
             let rp = new Circle();
             rp.id = route.id;
             rp.clickable = route.clickable;

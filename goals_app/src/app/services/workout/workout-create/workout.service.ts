@@ -45,6 +45,9 @@ export class WorkoutService {
             if (routePoint.zIndex < this.currentSessionPoint) {
                 routePoint.fillColor = new Color('green');
             }
+            if (routePoint.zIndex == this.currentSessionPoint) {
+                routePoint.fillColor = new Color('blue');
+            }
         });
     }
 
@@ -62,9 +65,13 @@ export class WorkoutService {
     changeUserLocation(location: Position): void {
         this.userLocation.position = location;
         this.routePoints.forEach(routePoint => {
+            if (routePoint.zIndex == this.currentSessionPoint) {
+                routePoint.fillColor = new Color('blue');
+            }
             if (this.arePointsNear(this.userLocation, routePoint, routePoint.radius / 1000) && this.currentSessionPoint === routePoint.zIndex) {
                 // siust requesta su tasko id
                 this.updateWorkoutSession(routePoint);
+
             }
         });
 
@@ -73,6 +80,9 @@ export class WorkoutService {
     // to update workout progress
     updateWorkoutSession(routePoint: any = {}): void {
         this._workoutSessionHttpService.updateWorkoutSession(this.currentSessionPoint, routePoint.id, this.workoutId).subscribe((result: any) => {
+            if (routePoint.zIndex == this.currentSessionPoint) {
+                routePoint.fillColor = new Color('blue');
+            }
             if (result.status === 0 || result.status === 2) {
                 this.destroyInterval();
                 this.clearRoutePoints();
@@ -83,6 +93,9 @@ export class WorkoutService {
             } else {
                 routePoint.fillColor = new Color('green');
                 this.currentSessionPoint++;
+                if (routePoint.zIndex == this.currentSessionPoint) {
+                    routePoint.fillColor = new Color('blue');
+                }
                 this._snackbarService.openSnackBar('Taškas įveiktas');
             }
         });
@@ -115,6 +128,16 @@ export class WorkoutService {
                 } else {
                     this.userLocation.position = Position.positionFromLatLng(location.latitude, location.longitude);
                 }
+                this.routePoints.forEach(routePoint => {
+                    if (routePoint.zIndex == this.currentSessionPoint) {
+                        routePoint.fillColor = new Color('blue');
+                    }
+                    if (this.arePointsNear(this.userLocation, routePoint, routePoint.radius / 1000) && this.currentSessionPoint === routePoint.zIndex) {
+                        // siust requesta su tasko id
+                        this.updateWorkoutSession(routePoint);
+
+                    }
+                });
                 this.locationString = "Location received: " + location.latitude + ' ' + location.longitude + ': ' + this.locationCounter++;
                 this.lastGeoTime = ' Laikas:' + new Date().toTimeString();
             }).catch(error => {

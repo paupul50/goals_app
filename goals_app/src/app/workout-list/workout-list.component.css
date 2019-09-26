@@ -1,1 +1,15 @@
 /* Add mobile styles for the component here.  */
+
+.label-color {
+    background-color: whitesmoke;
+}
+
+.text-center {
+    text-align: center;
+    margin-bottom: 20px;
+    margin-top: 20px;
+}
+
+.workout-label {
+    margin: 20px;
+}
